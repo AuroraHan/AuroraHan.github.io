@@ -102,7 +102,7 @@
 	<div class="intrude-less">
 		<header id="header" class="inner">
 			<div class="profilepic">
-				<img src="../public/img/My.jpg" class="js-avatar">
+				<img src="" class="js-avatar">
 			</div>
 			<hgroup>
 			  <h1 class="header-author js-header-author"></h1>
@@ -637,6 +637,174 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/05/07/Vue/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-JS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/07/JS/">Vue</a>
+    </h1>
+  
+
+        
+        <a href="/2021/04/07/JS/" class="archive-article-date">
+  	<time datetime="2021-04-07T09:35:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="数据类型检测："><a href="#数据类型检测：" class="headerlink" title="##数据类型检测："></a>##数据类型检测：</h2><ul>
+<li><p>typeof</p>
+<ul>
+<li>typeof [value] 返回一个字符串，字符串中包含对应的数据类型</li>
+<li>局限性：<ul>
+<li>typeof null -&gt; “object”</li>
+<li>typeof检测对象，除函数对象会返回“function”，其余对象返回的都是“object”「不能细分对象」</li>
+<li>typeof检测一个未被声明的变量，不会报错，结果是“undefined”</li>
+</ul>
+</li>
+<li>原理：<br>所有数据类型在计算机底层都是按照二进制的值来进行存储的，而typeof就是按照二进制的值进行检测的<ul>
+<li>性能好</li>
+<li>对象的二进制值开头都是“000”，而null的二进制值都是零，所以typeof检测null的时候，识别其实一个对象(这样是不对的);</li>
+<li>如果识别为对象，再看对象是否实现了call方法，实现了call方法的返回“function”，没有实现的统一返回“object”;</li>
+</ul>
+</li>
+<li>应用：<ul>
+<li>检测除null之外的原始值类型可以使用他</li>
+<li>检测是否为对象  if(obj!&#x3D;&#x3D;null &amp;&amp; &#x2F;^(object|function)$&#x2F;.test(typeof obj)){…}</li>
+<li>检测某个东西是否兼容  if(typeof Symbol!&#x3D;&#x3D;”undefined”){…}</li>
+<li>…</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>instanceof</p>
+<ul>
+<li>[对象] instanceof [构造函数]  检测对象是否为这个类的实例，基于这个特点可以“临时”拿来检测数据类型</li>
+<li>作用：<ul>
+<li>对typeof做了一个补充，可以适当的细分一下对象</li>
+</ul>
+</li>
+<li>局限性：<ul>
+<li>对原始值类型无效：instanceof左侧只要是原始值类型，结果就是false，默认不会进行“装箱”</li>
+<li>无法检测是否为“标准普通对象”：因为所有对象都是Object的一个实例，检测结果都是true</li>
+<li>因为我们可以修改原型链的指向，所以检测的结果不一定是准确的</li>
+</ul>
+</li>
+<li>原理<br>传统版本：instanceof检测是按照实例的原型链进行查找的，只要 [构造函数].prototype 出现在了[对象]的原型链上，那么检测结果都是true！<br>新版本：在Function.prototype上有一个Symbol.hasInstance属性方法(所有函数都可以使用)，当我们基于 “[对象] instanceof [构造函数]”检测处理的时候，内部是这样处理的：<br>  [构造函数]<a href="%5B%E5%AF%B9%E8%B1%A1%5D">Symbol.hasInstance</a></li>
+</ul>
+</li>
+<li><p>constructor</p>
+<ul>
+<li>它也是个临时工，局限性也很多，最主要的就是不准「因为我们可以随意修改constructor」</li>
+<li>作用：<ul>
+<li>可以检测是否为纯粹对象(标准普通对象)</li>
+<li>对原始值(除null&#x2F;undefined,因为他们两个无法进行成员访问)也有效</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Object.prototype.toString.call([value]) </p>
+<ul>
+<li>粗暴、准确、没有任何副作用</li>
+<li>除Object.prototype.toString之外，其余构造函数原型上的toString一般都是用来“转换字符串的”，只有它是用来检测数据类型的，返回的结果 “[object ?]”</li>
+<li>?是啥值<ul>
+<li>[value][Symbol.toStringTag] 有这个属性，属性值是啥，则结果中的“?”就是啥<br>Math &amp; GeneratorFunction.prototype &amp; Generator.prototype &amp; Promise.prototype …</li>
+<li>没有这个属性则一般找到的是自己所属的构造函数(以内置的为主)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>   Array.isArray 检测是否为数组<br>   isNaN 检测是否为有效数字</p>
+<p>##模块化规范</p>
+<ul>
+<li>单例设计模式是“最早期的模块规范”，在没有CommonJS&#x2F;+ ES6Module模块规范的时代，帮助我们实现了模块化发！AMD(require.js)是在单例设计模式的基础上，实现了模块和模块之间的依赖管理！</li>
+</ul>
+<p>—–但是上述操作都是过去时了</p>
+<p>当代前端开发，都是基于模块化进行开发，而模块化方案以 CommonJS&#x2F;ES6Module 为主</p>
+<ul>
+<li>他们都是按照创建一个JS就是创建一个模块来管理的「每个JS文件中的代码都是私有的」</li>
+<li>CommonJS：require &amp;&amp; module.exports</li>
+<li>ES6Module：export &amp;&amp; import</li>
+</ul>
+<hr>
+<ul>
+<li><p>我们编写的JS代码，可以运行的环境</p>
+</li>
+<li><p>1 浏览器   </p>
+<ul>
+<li>直接支持ES6Module，但是不支持CommonJS</li>
+<li>全局对象 window</li>
+</ul>
+</li>
+<li><p>2 NODE </p>
+<ul>
+<li>支持CommonJS，但是不支持ES6Module</li>
+<li>全局对象 global</li>
+</ul>
+</li>
+<li><p>3 webpack「基于node实现代码的合并压缩打包、最后把打包的结果导入到浏览器中运行」</p>
+<ul>
+<li>CommonJS&amp;ES6Module都支持，而且支持相互之间的“混用”(原理：webpack把两种模块规范都实现了一遍)</li>
+<li>支持 window&amp;global</li>
+</ul>
+</li>
+<li><p>4 vite「新的工程化打包工具」</p>
+<ul>
+<li>不是像webpack一样编译打包的，它本质就是基于ES6Module规范，实现模块之间的相互引用</li>
+</ul>
+</li>
+</ul>
+<h2 id="内置原型扩展"><a href="#内置原型扩展" class="headerlink" title="内置原型扩展"></a>内置原型扩展</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> 在内置类原型上自定义（或扩展）属性方法，供其实例调取使用</span></span><br><span class="line"><span class="comment">   [优势]</span></span><br><span class="line"><span class="comment">   + 操作起来更贴近于“原生”的操作  例如：arr.unique() 而不是之前的 unique(arr)</span></span><br><span class="line"><span class="comment">   + 方法中的this一般都是当前类的实例，直接去操作即可(不需要额外判断数据的类型)</span></span><br><span class="line"><span class="comment">   + 可以实现链式写法：方法执行完返回的结果，“依然是当前类的实例”，这样就可以继续调用其它的方法进行操作了</span></span><br><span class="line"><span class="comment">   + ...</span></span><br><span class="line"><span class="comment">   [特殊]</span></span><br><span class="line"><span class="comment">   + 我们自己扩展的方法，最好设置前缀，例如：myXxx，这样可以防止自己写的方法覆盖了内置的属性方法，导致不可控的BUG</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Array.prototype.myUnique = function myUnique() &#123;</span></span><br><span class="line"><span class="comment">    // this-&gt;实例arr</span></span><br><span class="line"><span class="comment">    return Array.from(new Set(this));</span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment">let arr = [1, 3, 2, 3, 2, 1, 2, 3, 4, 5, 2, 1, 2, 3, 4, 5];</span></span><br><span class="line"><span class="comment">arr = arr.myUnique().sort((a, b) =&gt; a - b);</span></span><br><span class="line"><span class="comment">console.log(arr); */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* const unique = function unique(arr) &#123;</span></span><br><span class="line"><span class="comment">    // 首先应该校验传递arr值，类型的合法性</span></span><br><span class="line"><span class="comment">    return Array.from(new Set(arr));</span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment">let arr = [1, 3, 2, 3, 2, 1, 2, 3, 4, 5, 2, 1, 2, 3, 4, 5];</span></span><br><span class="line"><span class="comment">arr = unique(arr);</span></span><br><span class="line"><span class="comment">arr.sort((a, b) =&gt; a - b);</span></span><br><span class="line"><span class="comment">console.log(arr); */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//=========================</span></span><br><span class="line"><span class="comment">// Object.prototype.hasOwnProperty：用来检测是否为私有属性  </span></span><br><span class="line"><span class="comment">//   语法：[对象].hasOwnProperty([属性])</span></span><br><span class="line"><span class="comment">//   检测[属性]是否为[对象]的私有属性，是返回TRUE，不是则返回FALSE；只看私有中有没有(和公有是否存在没关系)；</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// in操作符</span></span><br><span class="line"><span class="comment">//   语法：[属性] in [对象]</span></span><br><span class="line"><span class="comment">//   检测[属性]是否率属于这个[对象]，不论公有还是私有，只要能访问到这个属性，则结果就是TRUE</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* // 面试题：在Object.prototype.hasPubProperty，用户来检测当前属性是否为对象的公有属性（无关私有中是否存在）</span></span><br><span class="line"><span class="comment">Object.prototype.hasPubProperty = function hasPubProperty(attr) &#123;</span></span><br><span class="line"><span class="comment">    // this-&gt;obj要处理的对象  attr-&gt;&#x27;toString&#x27;要检测的属性</span></span><br><span class="line"><span class="comment">    // 思路：跳过私有属性的查找，直接在公有属性中查找，看看是否存在</span></span><br><span class="line"><span class="comment">    // Object.getPrototypeOf([实例对象])：获取当前实例对象的原型对象(或者获取“实例对象.__proto__”)</span></span><br><span class="line"><span class="comment">    let proto = Object.getPrototypeOf(this);</span></span><br><span class="line"><span class="comment">    while (proto) &#123;</span></span><br><span class="line"><span class="comment">        if (proto.hasOwnProperty(attr)) return true;</span></span><br><span class="line"><span class="comment">        proto = Object.getPrototypeOf(proto);</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">    return false;</span></span><br><span class="line"><span class="comment">    /!* // 思路：是对象的属性，而且还不是私有的属性，这样只能是公有属性了</span></span><br><span class="line"><span class="comment">    // 问题：如果attr即是私有的属性，也是公有的属性，基于这种方案检测结果是false</span></span><br><span class="line"><span class="comment">    return (attr in this) &amp;&amp; !this.hasOwnProperty(attr); *!/</span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment">let obj = &#123;</span></span><br><span class="line"><span class="comment">    name: &#x27;zhufeng&#x27;,</span></span><br><span class="line"><span class="comment">    age: 13,</span></span><br><span class="line"><span class="comment">    toString() &#123; &#125;</span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment">console.log(obj.hasPubProperty(&#x27;toString&#x27;)); //true */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/* // 私有属性还是公有属性本身就是相对的概念：自己堆内存中的是私有属性，基于__proto__查找的是“相对自己”公有属性</span></span><br><span class="line"><span class="comment">let arr = [10, 20];</span></span><br><span class="line"><span class="comment">// arr.push(30); //arr首先找自己私有的属性，发现没有push方法，则默认基于__proto__去Array.prototype上找；所以它是找到Array.prototype.push方法，把其执行「this-&gt;arr 实参-&gt;30」；而push方法执行的作用，就是给arr(this)的末尾追加新的内容30，并且让数组长度累加1，返回新增后数组长度！！</span></span><br><span class="line"><span class="comment">console.log(arr.hasOwnProperty(&#x27;push&#x27;)); //false</span></span><br><span class="line"><span class="comment">console.log(Array.prototype.hasOwnProperty(&#x27;push&#x27;)); //true</span></span><br><span class="line"><span class="comment">console.log(&#x27;push&#x27; in arr); //true */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//=========================</span></span><br><span class="line"><span class="comment">// 基于Class语法，设置的原型上的公共方法（或者静态私有方法）都是不可枚举的属性；但是基于 xxx=xxx 这种写法，设置的属性是可枚举的；</span></span><br><span class="line"><span class="comment">// 基于Class语法创造的构造函数，是不能当做普通函数执行的 Uncaught TypeError: Class constructor Modal cannot be invoked without &#x27;new&#x27;</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Modal</span> &#123;</span><br><span class="line">    <span class="comment">// 构造函数体：两种写法都是给实例设置私有的属性方法</span></span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params">x, y</span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">x</span> = x;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">y</span> = y;</span><br><span class="line">        <span class="comment">// this.sum = function () &#123; &#125;;</span></span><br><span class="line">    &#125;</span><br><span class="line">    z = <span class="number">10</span>;</span><br><span class="line">    sum = <span class="function">() =&gt;</span> &#123; &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在原型对象上设置供实例调用的“公共方法”「基于Class语法，无法向原型上直接设置公有属性」</span></span><br><span class="line">    <span class="title function_">getX</span>(<span class="params"></span>) &#123; <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">x</span>); &#125;</span><br><span class="line">    <span class="title function_">getY</span>(<span class="params"></span>) &#123; <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">y</span>); &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 把其作为普通对象，设置静态私有属性方法</span></span><br><span class="line">    <span class="keyword">static</span> n = <span class="number">200</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="title function_">setNumber</span>(<span class="params">n</span>) &#123; <span class="variable language_">this</span>.<span class="property">n</span> += n; &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 向原型扩展公共属性</span></span><br><span class="line"><span class="title class_">Modal</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">name</span> = <span class="string">&quot;zhufeng&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> m = <span class="keyword">new</span> <span class="title class_">Modal</span>(<span class="number">10</span>, <span class="number">20</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(m);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* function Modal(x, y) &#123;</span></span><br><span class="line"><span class="comment">    // 构造函数体 this-&gt;实例</span></span><br><span class="line"><span class="comment">    // 这里是给实例设置的私有属性方法</span></span><br><span class="line"><span class="comment">    this.x = x;</span></span><br><span class="line"><span class="comment">    this.y = y;</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">//把Modal作为构造函数，在其原型对象上设置供实例调用的公共属性方法</span></span><br><span class="line"><span class="comment">Modal.prototype.z = 10;</span></span><br><span class="line"><span class="comment">Modal.prototype.getX = function () &#123;</span></span><br><span class="line"><span class="comment">    console.log(this.x);</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">Modal.prototype.getY = function () &#123;</span></span><br><span class="line"><span class="comment">    console.log(this.y);</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">//把Modal作为普通对象，设置的静态私有属性方法</span></span><br><span class="line"><span class="comment">Modal.n = 200;</span></span><br><span class="line"><span class="comment">Modal.setNumber = function (n) &#123;</span></span><br><span class="line"><span class="comment">    this.n = n;</span></span><br><span class="line"><span class="comment">&#125;;</span></span><br><span class="line"><span class="comment">let m = new Model(10, 20); */</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="面像对象"><a href="#面像对象" class="headerlink" title="面像对象"></a>面像对象</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> JS中有很多的内置类</span></span><br><span class="line"><span class="comment">   @1 每一种数据类型值都有自己所属的内置类(专业叫法：构造函数)</span></span><br><span class="line"><span class="comment">     大类：Object</span></span><br><span class="line"><span class="comment">     小类：Number、String、Boolean、Symbol、BigInt、Function、Array、RegExp、Date、Set、Map....</span></span><br><span class="line"><span class="comment">   @2 每一HTML标签(或者每一个节点)，都有自己所属的内置类</span></span><br><span class="line"><span class="comment">     body -&gt; HTMLBodyElement -&gt; HTMLElement -&gt; Element -&gt; Node -&gt; EventTarget -&gt; Object</span></span><br><span class="line"><span class="comment">      div -&gt; HTMLDivElement -&gt;     </span></span><br><span class="line"><span class="comment">                                XMLElement</span></span><br><span class="line"><span class="comment">                                               Text</span></span><br><span class="line"><span class="comment">                                               Document</span></span><br><span class="line"><span class="comment">   @3 HTMLCollection\NodeList</span></span><br><span class="line"><span class="comment">   ...</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> 学习面向对象的作用：</span></span><br><span class="line"><span class="comment">   @1 更好的学习JS</span></span><br><span class="line"><span class="comment">   @2 封装插件、组件、框架</span></span><br><span class="line"><span class="comment">   ......</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> 自定义构造函数(类)</span></span><br><span class="line"><span class="comment">   创建一个函数，执行的时候，把其“new”执行，则当前函数被称为“自定义构造函数(类)”；执行的返回结果一般是当前类的一个“实例”；</span></span><br><span class="line"><span class="comment">   “new”多次会创造多个不同的实例对象「实例对象的独立性」；基于this.xxx=xxx是给实例对象设置“私有属性方法”；</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* function Fn(x, y) &#123;</span></span><br><span class="line"><span class="comment">    let sum = 10;</span></span><br><span class="line"><span class="comment">    this.total = x + y;</span></span><br><span class="line"><span class="comment">    this.say = function () &#123;</span></span><br><span class="line"><span class="comment">        console.log(`我计算的和是:$&#123;this.total&#125;`);</span></span><br><span class="line"><span class="comment">    &#125;;</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">let res = Fn(10, 20); //普通函数执行  Fn执行的返回值赋值给res</span></span><br><span class="line"><span class="comment">let f1 = new Fn(10, 20); //构造函数执行  把Fn当做一个类，f1是创造出来的一个实例</span></span><br><span class="line"><span class="comment">let f2 = new Fn;</span></span><br><span class="line"><span class="comment">console.log(f1.sum);</span></span><br><span class="line"><span class="comment">console.log(f1.total);</span></span><br><span class="line"><span class="comment">console.log(f1.say === f2.say); */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//====================</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Fn</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">x</span> = <span class="number">100</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">y</span> = <span class="number">200</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">getX</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">x</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">Fn</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">getX</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">x</span>);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="title class_">Fn</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">getY</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">y</span>);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">let</span> f1 = <span class="keyword">new</span> <span class="title class_">Fn</span>;</span><br><span class="line"><span class="keyword">let</span> f2 = <span class="keyword">new</span> <span class="title class_">Fn</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(f1.<span class="property">getX</span> === f2.<span class="property">getX</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(f1.<span class="property">getY</span> === f2.<span class="property">getY</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(f1.<span class="property">__proto__</span>.<span class="property">getY</span> === <span class="title class_">Fn</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">getY</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(f1.<span class="property">__proto__</span>.<span class="property">getX</span> === f2.<span class="property">getX</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(f1.<span class="property">getX</span> === <span class="title class_">Fn</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">getX</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(f1.<span class="property">constructor</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Fn</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">__proto__</span>.<span class="property">constructor</span>);</span><br><span class="line">f1.<span class="title function_">getX</span>();</span><br><span class="line">f1.<span class="property">__proto__</span>.<span class="title function_">getX</span>();</span><br><span class="line">f2.<span class="title function_">getY</span>();</span><br><span class="line"><span class="title class_">Fn</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="title function_">getY</span>();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/07/JS/">展开全文 >></a>
         </p>
       
 
